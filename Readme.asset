@@ -1,10 +1,5 @@
 # 🍳 Cook - 3D Kitchen Chaos Simulator
 
-[![Unity](https://img.shields.io/badge/Unity-6000.0.44f1%20(6)-black?logo=unity)](https://unity.com/)
-[![Render Pipeline](https://img.shields.io/badge/Render%20Pipeline-URP-blue)](https://unity.com/srp/Universal-Render-Pipeline)
-[![Language](https://img.shields.io/badge/Language-C%23-239120?logo=c-sharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20PC-lightgrey?logo=windows)](https://www.microsoft.com/)
-
 A fast-paced 3D culinary time-management simulator built in **Unity 6** using the **Universal Render Pipeline (URP)**. Take charge of a bustling kitchen, prepare fresh ingredients at dedicated stations, satisfy hungry customers across 4 live service windows, and beat the clock to achieve the ultimate high score!
 
 ---
