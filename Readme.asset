@@ -1,34 +1,193 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
-  m_Name: Readme
-  m_EditorClassIdentifier: 
-  icon: {fileID: 2800000, guid: 727a75301c3d24613a3ebcec4a24c2c8, type: 3}
-  title: URP Empty Template
-  sections:
-  - heading: Welcome to the Universal Render Pipeline
-    text: This template includes the settings and assets you need to start creating with the Universal Render Pipeline.
-    linkText: 
-    url:
-  - heading: URP Documentation
-    text:
-    linkText: Read more about URP
-    url: https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest
-  - heading: Forums
-    text:
-    linkText: Get answers and support
-    url: https://forum.unity.com/forums/universal-render-pipeline.383/
-  - heading: Report bugs
-    text:
-    linkText: Submit a report
-    url: https://unity3d.com/unity/qa/bug-reporting
-  loadedLayout: 1
+# 🍳 Cook - 3D Kitchen Chaos Simulator
+
+[![Unity](https://img.shields.io/badge/Unity-6000.0.44f1%20(6)-black?logo=unity)](https://unity.com/)
+[![Render Pipeline](https://img.shields.io/badge/Render%20Pipeline-URP-blue)](https://unity.com/srp/Universal-Render-Pipeline)
+[![Language](https://img.shields.io/badge/Language-C%23-239120?logo=c-sharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20PC-lightgrey?logo=windows)](https://www.microsoft.com/)
+
+A fast-paced 3D culinary time-management simulator built in **Unity 6** using the **Universal Render Pipeline (URP)**. Take charge of a bustling kitchen, prepare fresh ingredients at dedicated stations, satisfy hungry customers across 4 live service windows, and beat the clock to achieve the ultimate high score!
+
+---
+
+## 📑 Table of Contents
+
+- [Overview](#-overview)
+- [Gameplay Loop](#-gameplay-loop)
+- [Controls](#-controls)
+- [Important Notes](#-important-notes)
+- [Kitchen Stations & Recipes](#-kitchen-stations--recipes)
+- [Customer Orders & Scoring](#-customer-orders--scoring)
+- [UI & Menus](#-ui--menus)
+- [Code Architecture](#-code-architecture)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Opening in Unity](#opening-in-unity)
+  - [Playing the Game](#playing-the-game)
+
+---
+
+## 🎮 Overview
+
+In **Cook**, you have **3 minutes (180 seconds)** to fulfill as many customer orders as possible. Customers line up along 4 service windows on the kitchen wall, demanding various combinations of cooked meat patties, sliced vegetables, and cheese. Manage your time wisely: retrieve raw ingredients from the refrigerator, sear meats on the dual-slot stove, slice veggies at the prep counter, and deliver completed plates before order timers tick down.
+
+---
+
+## 🔁 Gameplay Loop
+
+```mermaid
+graph LR
+    A[Start Game: 3 Min Timer] --> B[Check Customer Windows 1-4]
+    B --> C[Fetch Ingredients from Refrigerator]
+    C --> D{Needs Preparation?}
+    D -- Meat --> E[Cook on Stove: 6.0s]
+    D -- Vegetables --> F[Slice at Prep Table: 2.0s]
+    D -- Cheese --> G[Ready to Serve]
+    E --> G
+    F --> G
+    G --> H[Place on Customer Window Plate]
+    H --> I{All Items Delivered?}
+    I -- No --> B
+    I -- Yes --> J[Order Completed: Points Tallied!]
+    J --> K[5s Respawn Delay -> New Customer]
+
+Start: The game opens with a Controls & Instructions window. Click Begin Game (or press Space/Enter) to start the 3-minute session.
+Orders: 4 customer windows immediately open with randomized recipe orders.
+Prep: Pick up ingredients from the refrigerator, cook raw meat on the stove, and chop vegetables at the prep counter.
+Serve: Deliver items to the counter plate at the matching customer window.
+Score: Once all required ingredients are placed on the plate, the order is fulfilled, points are awarded with floating visual feedback, and a new customer arrives after 5 seconds.
+Game Over: When the 3-minute countdown reaches zero, the game ends, displaying your final score, high score, and a New High Score! banner if you set a record.
+⌨ Controls
+Action	Primary Key	Alternate Input
+Move Up / Forward	W	▲ Up Arrow
+Move Down / Backward	S	▼ Down Arrow
+Move Left	A	◄ Left Arrow
+Move Right	D	► Right Arrow
+Interact / Pick Up / Place	E	Left Mouse Click
+Refrigerator: Quick Meat	1	Refrigerator UI Button
+Refrigerator: Quick Cheese	2	Refrigerator UI Button
+Refrigerator: Quick Vegetables	3	Refrigerator UI Button
+Pause / Resume Game	P	Esc / On-screen Pause Button
+Restart Game	R	Restart Button (Pause / Game Over)
+Begin Game / Confirm	Space	Enter / UI Button
+⚠️ Important Notes
+IMPORTANT
+
+To use the Refrigerator, you need to rotate the character correctly: The player interaction system utilizes forward directional targeting (Physics.SphereCastNonAlloc). Make sure your character is turned to directly face the front of the Refrigerator to bring up the interaction prompt and retrieve ingredients.
+
+Tip: Walk directly toward the refrigerator counter before pressing E or 1/2/3.
+
+Single-Item Capacity: The chef can hold one item at a time in hand. To switch items, place your current item on a valid station/plate or discard it in the Trash.
+Overcooked Food: Do not leave cooked meat patties on the stove for too long after they finish searing, or they will burn into Overcooked food that customers will reject!
+Trash Station: Any raw, burnt, or unwanted ingredient can be permanently discarded in the Trash can next to the counter.
+🍽 Kitchen Stations & Recipes
+1. 🧊 Refrigerator
+Function: Infinite pantry providing raw cooking staples.
+Available Items:
+🥩 Raw Meat (Requires cooking on the stove)
+🧀 Cheese (Ready to serve immediately)
+🥦 Raw Vegetables (Requires chopping on the table)
+Shortcuts: Press 1 for Meat, 2 for Cheese, or 3 for Veggies when facing the unit.
+2. 🔥 Dual-Slot Stove
+Function: Searing meat patties.
+Capacity: 2 independent cooking slots.
+Cook Duration: 6.0 seconds per patty.
+Features: Autonomous cooking progress bars, dual-card WorldSpace display, and real-time visual transformation from raw red meat to cooked brown patties.
+3. 🔪 Prep Table / Chopping Board
+Function: Slicing raw vegetables.
+Capacity: 1 item at a time.
+Chop Duration: 2.0 seconds.
+Features: Live circular/countdown progress gauge, transforming whole veggies into diced culinary slices.
+4. 🗑 Trash Can
+Function: Cleans up kitchen messes.
+Behavior: Instantly destroys any held item (raw ingredients, chopped items, cooked patties, or burnt food).
+5. 🪟 Customer Windows (Windows 1 - 4)
+Function: Order pickup & delivery counter.
+Capacity: 4 simultaneous customer windows.
+Features:
+Live WorldSpace order ticket floating above each counter.
+Physical Vector Checkboxes: Automatically displays a green box with a crisp white tick mark ✔ both when you hold the ingredient in hand ([E]) and when it has been placed on the counter plate (COLLECTED).
+True 3D plate holder ensuring delivered items maintain their natural proportions without squishing.
+5.0-second respawn timer between completed orders.
+🎯 Customer Orders & Scoring
+Ingredient Score Values
+Ingredient	Preparation Required	Base Score
+Cooked Patty	Sear on Stove (6.0s)	+30 Points
+Sliced Vegetables	Chop on Table (2.0s)	+20 Points
+Cheese	None (Ready to Serve)	+10 Points
+Dynamic Scoring Formula
+The final score for each fulfilled order is determined dynamically by the formula: 
+Order Score
+=
+∑
+(
+Base Values of Required Ingredients
+)
+−
+⌊
+Elapsed Seconds
+⌋
+Order Score=∑(Base Values of Required Ingredients)−⌊Elapsed Seconds⌋
+
+Speed Bonus: Delivering orders quickly rewards maximum points.
+Floating Visual Feedback: Upon completion, a floating score indicator (+Pts) rises and fades smoothly above the window.
+Persistent High Scores: Scores are saved locally via PlayerPrefs and compared against all-time records.
+Speed Bonus: Delivering orders quickly rewards maximum points.
+Floating Visual Feedback: Upon completion, a floating score indicator (+Pts) rises and fades smoothly above the window.
+Persistent High Scores: Scores are saved locally via PlayerPrefs and compared against all-time records.
+
+🖥 UI & Menus
+Main Menu: Clean start screen with Play Game and Quit Game options, mouse cursor integration, and keyboard shortcuts.
+Controls & How to Play Dialog: Appears at match launch while gameplay is paused, detailing keybindings and station workflows.
+
+In-Game HUD:
+Real-time 3:00 countdown timer.
+Persistent Current Score and High Score display.
+Quick Pause and Quit buttons.
+Pause Menu: Allows players to Resume, Restart, return to Main Menu, or Quit.
+Game Over Screen: Automatically triggers when the 3-minute timer hits zero. Shows final points, high score comparison, and a glowing gold "New High Score!" banner for record-breaking runs.
+
+
+🏗 Code Architecture
+The project is structured with modularity, clean separation of concerns, and zero per-frame garbage collection allocations:
+
+
+
+Assets/
+├── Editor/                         # Custom Unity Editor inspectors & tools
+│   ├── OrderEditorWindow.cs        # Live Editor window monitoring all 4 customer orders
+│   ├── SetupHierarchyPanels.cs     # Editor utility creating/verifying all in-game UI panels
+│   └── ...
+├── Scenes/
+│   ├── MainMenu.unity              # Start menu scene
+│   └── GameScene.unity              # Core gameplay kitchen scene
+└── Scripts/
+    ├── GameManager.cs              # Game state machine, 3-minute timer & scorekeeper
+    ├── GameState.cs                # Enum: WaitingToStart, Playing, Paused, GameOver
+    ├── PlayerController.cs         # Smooth 3D physics-based character movement
+    ├── PlayerInteractor.cs         # Non-alloc directional interaction & carry system
+    ├── Kitchen/
+    │   ├── IngredientType.cs       # Enum: Meat, CookedPatty, Veggies, SlicedVeggies, Cheese, Overcooked
+    │   ├── KitchenObject.cs        # 3D interactive food item entity
+    │   └── IngredientDatabase.cs   # Mesh & material factory for culinary assets
+    ├── Orders/
+    │   ├── Order.cs                # Order data model, fulfillment logic & score calculator
+    │   └── OrderManager.cs         # Order distributor & window manager
+    └── Stations/
+        ├── BaseStation.cs          # Abstract base class for all kitchen counters
+        ├── CustomerWindowStation.cs# Customer window, plates, UI tickets & vector checkboxes
+        ├── RefrigeratorStation.cs  # Fridge counter logic & shortcut dispatcher
+        ├── StoveStation.cs         # Dual-slot autonomous cooking station
+        ├── TableStation.cs         # Cutting board timer & visual transformer
+        └── TrashStation.cs         # Disposal counter
+
+
+Key Engineering Highlights:
+Zero-Allocation Physics: Interaction detection uses pre-allocated buffers (Physics.SphereCastNonAlloc, Physics.OverlapSphereNonAlloc).
+Vector Checkbox Rendering: Checkmark ticks are constructed from procedural UI vector primitives—eliminating missing-glyph square boxes (□) inherent to standard TextMeshPro font packages.
+Event-Driven UI: GameManager communicates state, timer, and score changes through C# Action delegates, decoupling gameplay logic from presentation.
+
+🚀 Getting Started
+Prerequisites
+Unity Version: Unity 6 (6000.0.44f1 or later recommended).
+Render Pipeline: Universal Render Pipeline (URP).
+Target OS: Windows 10 / 11 (64-bit).
